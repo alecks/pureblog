@@ -34,7 +34,6 @@ func getHTML() (string, error) {
 // htmlCache holds the main.html file's cache.
 var htmlCache string = ""
 
-// * Post cache is currently disabled.
 // getPost gets a post from the cache if it exists; else get from posts folder.
 func getPost(post string) ([]byte, error) {
 	// If the post id doesn't have the md extension, append to it with .md.
@@ -42,21 +41,16 @@ func getPost(post string) ([]byte, error) {
 		post += ".md"
 	}
 
-	/*
-		// If the post is present in the cache, return it.
-		if found := postCache[post]; found != nil {
-			return found, nil
-		}
-	*/
+	// If the post is present in the cache, return it.
+	if found := postCache[post]; found != nil {
+		return found, nil
+	}
 
 	// Else read the file and add it to cache.
 	file, err := ioutil.ReadFile(path.Join("posts", post))
-	// postCache["post"] = file
+	postCache["post"] = file
 	return file, err
 }
 
-// ? Should there be a post cache? The performance improvement seems to be too minor.
-/*
 // postCache holds cached posts.
 var postCache = make(map[string][]byte)
-*/
