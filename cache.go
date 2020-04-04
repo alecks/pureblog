@@ -44,7 +44,6 @@ func getPost(post string, cache bool) (string, error) {
 
 	// If the post is present in the cache, return it.
 	if found, ok := postCache[post]; ok && cache {
-		fmt.Println("cached")
 		return found, nil
 	}
 
