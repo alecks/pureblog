@@ -30,9 +30,13 @@ func main() {
 
 	// Set the / route. Simply returns a list of posts.
 	r.GET("/", func(c *gin.Context) {
+		postList, err := getPostList()
+		if err != nil {
+			panic(err)
+		}
+
 		c.Header("Content-Type", "text/html")
-		// TODO: Implement post list.
-		c.String(http.StatusOK, "<h2><a href='https://github.com/fjah/pureblog'>pureblog</a> by alex_eek. Post list yet to be implemented.</h2><br />See <a href='/test'>the test page</a>.")
+		c.String(http.StatusOK, postList)
 	})
 	// Set the /:post route. If the :post param is specified, a md file will be converted and rendered; else, 404.
 	r.GET("/:post", func(c *gin.Context) {

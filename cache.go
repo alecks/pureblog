@@ -13,7 +13,7 @@ func getCSS() ([]byte, error) {
 		return cssCache, nil
 	}
 
-	file, err := ioutil.ReadFile(path.Join("styles", "main.css"))
+	file, err := ioutil.ReadFile(path.Join("styles", "post.css"))
 	cssCache = file
 	return file, err
 }
@@ -27,7 +27,7 @@ func getHTML() (string, error) {
 		return htmlCache, nil
 	}
 
-	file, err := ioutil.ReadFile(path.Join("styles", "main.html"))
+	file, err := ioutil.ReadFile(path.Join("styles", "post.html"))
 	htmlCache = string(file)
 	return htmlCache, err
 }
@@ -50,8 +50,11 @@ func getPost(post string) (string, error) {
 	// Else read the file and add it to cache.
 	file, err := ioutil.ReadFile(path.Join("posts", post))
 
-	cssMain, _ := getCSS()
-	htmlMain, _ := getHTML()
+	cssMain, err := getCSS()
+	htmlMain, err := getHTML()
+	if err != nil {
+		panic(err)
+	}
 
 	res := fmt.Sprintf(
 		htmlMain,
@@ -65,3 +68,60 @@ func getPost(post string) (string, error) {
 
 // postCache holds cached posts.
 var postCache = make(map[string]string)
+
+// getPostPreview gets the template for posts being displayed in the post list from cache if present; else read file.
+func getPostPreview() (string, error) {
+	if shouldCache && postPreviewCache != "" {
+		return postPreviewCache, nil
+	}
+
+	file, err := ioutil.ReadFile(path.Join("styles", "post_preview.html"))
+	postPreviewCache = string(file)
+
+	return postPreviewCache, err
+}
+
+// postPreviewCache holds the post list entry template.
+var postPreviewCache = ""
+
+// getPostListTemplate gets the template for posts being displayed in the post list from cache if present; else read file.
+func getPostListTemplate() (string, error) {
+	if shouldCache && postListTemplateCache != "" {
+		return postListTemplateCache, nil
+	}
+
+	file, err := ioutil.ReadFile(path.Join("styles", "post_list.html"))
+	postListTemplateCache = string(file)
+
+	return postListTemplateCache, err
+}
+
+// postListTemplateCache holds the post list entry template.
+var postListTemplateCache = ""
+
+// getPostList gets a list of posts for the homepage from the cache if present; else read dir.
+func getPostList() (res string, err error) {
+	if shouldCache && postListCache != "" {
+		return postListCache, nil
+	}
+
+	postDirectory, err := ioutil.ReadDir("posts")
+
+	for _, v := range postDirectory {
+		postName := v.Name()
+		preview, err := getPostPreview()
+		if err != nil {
+			panic(err)
+		}
+		res += fmt.Sprintf(preview, "/"+postName, postName)
+	}
+
+	plTemplate, err := getPostListTemplate()
+	res = fmt.Sprintf(plTemplate, res)
+
+	postListCache = res
+	return
+}
+
+// postListCache holds the post list.
+var postListCache = ""
