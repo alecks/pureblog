@@ -11,12 +11,12 @@ import (
 )
 
 var md *markdown.Markdown
+var shouldCache = false
 
 func main() {
 	// Load from the .env file; this is required for the PORT and CACHE_POSTS variables.
 	godotenv.Load()
 
-	shouldCache := false
 	if envCache := os.Getenv("CACHE_POSTS"); envCache == "TRUE" {
 		shouldCache = true
 	}
@@ -38,7 +38,7 @@ func main() {
 	r.GET("/:post", func(c *gin.Context) {
 		// Get the specified post.
 		postID := c.Param("post")
-		file, err := getPost(postID, shouldCache)
+		file, err := getPost(postID)
 
 		// Abort if error.
 		if err != nil {

@@ -36,14 +36,14 @@ func getHTML() (string, error) {
 var htmlCache string = ""
 
 // getPost gets a post from the cache if it exists; else get from posts folder.
-func getPost(post string, cache bool) (string, error) {
+func getPost(post string) (string, error) {
 	// If the post id doesn't have the md extension, append to it with .md.
 	if !strings.HasSuffix(post, ".md") {
 		post += ".md"
 	}
 
 	// If the post is present in the cache, return it.
-	if found, ok := postCache[post]; ok && cache {
+	if found, ok := postCache[post]; ok && shouldCache {
 		return found, nil
 	}
 
