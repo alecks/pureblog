@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path"
 	"strings"
@@ -35,22 +36,33 @@ func getHTML() (string, error) {
 var htmlCache string = ""
 
 // getPost gets a post from the cache if it exists; else get from posts folder.
-func getPost(post string) ([]byte, error) {
+func getPost(post string, cache bool) (string, error) {
 	// If the post id doesn't have the md extension, append to it with .md.
 	if !strings.HasSuffix(post, ".md") {
 		post += ".md"
 	}
 
 	// If the post is present in the cache, return it.
-	if found := postCache[post]; found != nil {
+	if found, ok := postCache[post]; ok && cache {
+		fmt.Println("cached")
 		return found, nil
 	}
 
 	// Else read the file and add it to cache.
 	file, err := ioutil.ReadFile(path.Join("posts", post))
-	postCache["post"] = file
-	return file, err
+
+	cssMain, _ := getCSS()
+	htmlMain, _ := getHTML()
+
+	res := fmt.Sprintf(
+		htmlMain,
+		post,
+		cssMain,
+		md.RenderToString(file),
+	)
+	postCache[post] = res
+	return res, err
 }
 
 // postCache holds cached posts.
-var postCache = make(map[string][]byte)
+var postCache = make(map[string]string)

@@ -1,21 +1,28 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gitlab.com/golang-commonmark/markdown"
 )
 
+var md *markdown.Markdown
+
 func main() {
-	// Load from the .env file; this is required for the PORT variable.
+	// Load from the .env file; this is required for the PORT and CACHE_POSTS variables.
 	godotenv.Load()
 
+	shouldCache := false
+	if envCache := os.Getenv("CACHE_POSTS"); envCache == "TRUE" {
+		shouldCache = true
+	}
+
 	// Create the MD->HTML converter.
-	md := markdown.New(markdown.HTML(true), markdown.Typographer(false))
+	md = markdown.New(markdown.HTML(true), markdown.Typographer(false))
 
 	// Define the router.
 	gin.SetMode(gin.ReleaseMode)
@@ -31,7 +38,7 @@ func main() {
 	r.GET("/:post", func(c *gin.Context) {
 		// Get the specified post.
 		postID := c.Param("post")
-		file, err := getPost(postID)
+		file, err := getPost(postID, shouldCache)
 
 		// Abort if error.
 		if err != nil {
@@ -39,18 +46,9 @@ func main() {
 			return
 		}
 
-		cssMain, _ := getCSS()
-		htmlMain, _ := getHTML()
-
 		// Render the HTML, with the Content-Type as text/html.
 		c.Header("Content-Type", "text/html")
-		res := fmt.Sprintf(
-			htmlMain,
-			postID,
-			cssMain,
-			md.RenderToString(file),
-		)
-		c.String(http.StatusOK, res)
+		c.String(http.StatusOK, file)
 	})
 
 	// Run gin (server).
