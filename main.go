@@ -17,7 +17,7 @@ func main() {
 	// Load from the .env file; this is required for the PORT and CACHE_POSTS variables.
 	godotenv.Load()
 
-	if envCache := os.Getenv("CACHE_POSTS"); envCache == "TRUE" {
+	if envCache := os.Getenv("CACHE"); envCache == "TRUE" {
 		shouldCache = true
 	}
 

@@ -1,10 +1,18 @@
 <!--
-  The first string placeholder represents the created post list (editable - see post_preview.html).
+  The first string placeholder represents the contents of post.css.
+
+  The second string placeholder represents the created post list (editable - see post_preview.html).
 -->
 
 <html>
-  <head><title>pureblog ~ post list</title></head>
+  <head>
+    <title>pureblog ~ post list</title>
+    <style>%s</style>
+  </head>
   <body>
-    %s<hr /><em><a href='https://github.com/fjah/pureblog'>pureblog</a></em>
+    <h1>Posts</h1>
+    %s
+    <hr />
+    <em><a href="https://github.com/fjah/pureblog">pureblog</a></em>
   </body>
 </html>

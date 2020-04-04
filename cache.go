@@ -9,11 +9,11 @@ import (
 
 // getCSS gets the main.css file from the cache if it exists; else get from posts folder.
 func getCSS() ([]byte, error) {
-	if cssCache != nil {
+	if shouldCache && cssCache != nil {
 		return cssCache, nil
 	}
 
-	file, err := ioutil.ReadFile(path.Join("styles", "post.css"))
+	file, err := ioutil.ReadFile(path.Join("styles", "main.css"))
 	cssCache = file
 	return file, err
 }
@@ -21,9 +21,9 @@ func getCSS() ([]byte, error) {
 // cssCache holds the main.css file's cache.
 var cssCache []byte
 
-// getHTML gets the main.html file from the cache if it exists; else get from posts folder.
-func getHTML() (string, error) {
-	if htmlCache != "" {
+// getPostTemplate gets the main.html file from the cache if it exists; else get from posts folder.
+func getPostTemplate() (string, error) {
+	if shouldCache && htmlCache != "" {
 		return htmlCache, nil
 	}
 
@@ -51,7 +51,7 @@ func getPost(post string) (string, error) {
 	file, err := ioutil.ReadFile(path.Join("posts", post))
 
 	cssMain, err := getCSS()
-	htmlMain, err := getHTML()
+	htmlMain, err := getPostTemplate()
 	if err != nil {
 		panic(err)
 	}
@@ -117,7 +117,8 @@ func getPostList() (res string, err error) {
 	}
 
 	plTemplate, err := getPostListTemplate()
-	res = fmt.Sprintf(plTemplate, res)
+	css, err := getCSS()
+	res = fmt.Sprintf(plTemplate, css, res)
 
 	postListCache = res
 	return
