@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +18,7 @@ func main() {
 	md := markdown.New(markdown.HTML(true), markdown.Typographer(false))
 
 	// Define the router.
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 
 	// Set the / route. Simply returns a list of posts.
@@ -52,5 +54,6 @@ func main() {
 	})
 
 	// Run gin (server).
+	log.Println("Starting gin server.")
 	r.Run()
 }
