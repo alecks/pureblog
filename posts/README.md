@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/fjah/pureblog/master/assets/pureblog.png" width="10%">
 
-![Go](https://github.com/fjah/pureblog/workflows/Go/badge.svg)
+![Go Master](https://github.com/fjah/pureblog/workflows/Go%20Master/badge.svg)
 
 Pureblog is the most simple markdown blog you could possibly get. Written in Go using gin-gonic and golang-commonmark.
 
